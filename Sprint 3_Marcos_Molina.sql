@@ -24,18 +24,18 @@ ADD CONSTRAINT fk_transaction_credit_card
 #EXERCICI 2: El departament de Recursos Humans ha identificat un error en el número de compte associat a la targeta de crèdit amb ID CcU-2938. 
 #La informació que ha de mostrar-se per a aquest registre és: TR323456312213576817699999. Recorda mostrar que el canvi es va realitzar.
 UPDATE credit_card
-SET iban = "TR323456312213576817699999"
-WHERE id = "CcU-2938";
+SET iban = 'TR323456312213576817699999'
+WHERE id = 'CcU-2938';
 
 #EXERCICI 3: En la taula "transaction" ingressa una nova transacció amb la següent informació:
 INSERT INTO company (id)
-VALUES ("b-9999");
+VALUES ('b-9999');
 
 INSERT INTO credit_card (id)
-VALUES ("CcU-9999");
+VALUES ('CcU-9999');
 
 INSERT INTO transaction (id, credit_card_id, company_id, user_id, lat, longitude, amount, declined)
-VALUES ("108B1D1D-5B23-A76C-55EF-C568E49A99DD", "CcU-9999", "b-9999", 9999, 829.999, -117.999, 111.11, 0);
+VALUES ('108B1D1D-5B23-A76C-55EF-C568E49A99DD', 'CcU-9999', 'b-9999', 9999, 829.999, -117.999, 111.11, 0);
 
 #EXERCICI 4: Des de recursos humans et sol·liciten eliminar la columna "pan" de la taula credit_card. Recorda mostrar el canvi realitzat.
 ALTER TABLE credit_card DROP COLUMN pan;
@@ -47,24 +47,24 @@ ALTER TABLE credit_card DROP COLUMN pan;
 #EXERCICI 1: Elimina de la taula transaction el registre amb ID 000447FE-B650-4DCF-85DE-C7ED0EE1CAAD de la base de dades.
 SELECT *
 FROM transaction
-WHERE id = "000447FE-B650-4DCF-85DE-C7ED0EE1CAAD";
+WHERE id = '000447FE-B650-4DCF-85DE-C7ED0EE1CAAD';
 
 DELETE FROM transaction 
-WHERE id = "000447FE-B650-4DCF-85DE-C7ED0EE1CAAD";
+WHERE id = '000447FE-B650-4DCF-85DE-C7ED0EE1CAAD';
 
 SELECT *
 FROM transaction
-WHERE id = "000447FE-B650-4DCF-85DE-C7ED0EE1CAAD";
+WHERE id = '000447FE-B650-4DCF-85DE-C7ED0EE1CAAD';
 
 #EXERCICI 2: La secció de màrqueting desitja tenir accés a informació específica per a realitzar anàlisi i estratègies efectives. S'ha sol·licitat crear una vista 
 #que proporcioni detalls clau sobre les companyies i les seves transaccions. Serà necessària que creïs una vista anomenada VistaMarketing que contingui la següent informació: 
 #Nom de la companyia. Telèfon de contacte. País de residència. Mitjana de compra realitzat per cada companyia. 
 #Presenta la vista creada, ordenant les dades de major a menor mitjana de compra.
 CREATE VIEW VistaMarketing AS 
-SELECT company_name, phone, country, ROUND(AVG(amount), 2) AS mitjana_compra
+SELECT c.company_name, c.phone, c.country, ROUND(AVG(t.amount), 2) AS mitjana_compra
 FROM company c
 JOIN transaction t ON c.id = t.company_id
-WHERE declined=0
+WHERE t.declined=0
 GROUP BY c.id;
 
 SELECT *
@@ -74,7 +74,7 @@ ORDER BY mitjana_compra DESC;
 #EXERCICI 3: Filtra la vista VistaMarketing per a mostrar només les companyies que tenen el seu país de residència en "Germany"
 SELECT *
 FROM VistaMarketing
-WHERE country = "Germany";
+WHERE country = 'Germany';
 
 ########################################
 
@@ -130,7 +130,7 @@ ADD CONSTRAINT fk_transaction_data_user
 #Assegureu-vos d'incloure informació rellevant de les taules que coneixereu i utilitzeu àlies per canviar de nom columnes segons calgui.
 #Mostra els resultats de la vista, ordena els resultats de forma descendent en funció de la variable ID de transacció.
 CREATE VIEW InformeTecnico AS
-SELECT t.id, name AS nom, surname AS cognom, d.country AS país_usuari, iban, amount AS import, declined AS rebutjada, company_name AS nom_companyia
+SELECT t.id, d.name AS nom, d.surname AS cognom, d.country AS país_usuari, cc.iban, t.amount AS `import`, t.declined AS rebutjada, co.company_name AS nom_companyia
 FROM transaction t
 JOIN data_user d 	ON t.user_id = d.id
 JOIN credit_card cc ON t.credit_card_id = cc.id
@@ -138,4 +138,4 @@ JOIN company co 	ON t.company_id = co.id;
 
 SELECT *
 FROM InformeTecnico
-ORDER BY t.id DESC;
+ORDER BY id DESC;
